@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+*.pth
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Data & models (too large for git — run pipeline locally to regenerate)
+*.pkl
+*.h5
+
+# Logs
+*.log
+nohup.out
+
+# OS
+.DS_Store
+Thumbs.db
