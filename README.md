@@ -10,7 +10,7 @@
 
 ```
 aerocool-ai/
-├── backend/                  ← Python AI engine (Member 3)
+├── backend/                  ← Python AI engine 
 │   ├── data_pipeline/        merge + LSTM forecasting pipeline
 │   ├── models/               XGBoost + custom PINN training
 │   ├── hvi_engine/           Heat Vulnerability Index scorer
@@ -20,7 +20,7 @@ aerocool-ai/
 │   ├── outputs/              exported CSVs + charts
 │   └── demo_dashboard.py     internal Streamlit demo
 │
-├── frontend/                 ← React dashboard (Member 4)
+├── frontend/                 ← React dashboard
 │   ├── src/
 │   │   ├── App.jsx           main app + navigation
 │   │   └── components/
@@ -107,7 +107,7 @@ streamlit run demo_dashboard.py
 
 | Member | Role |
 |---|---|
-| Member 1 | Hardware & Sensor Integration |
-| Member 2 | Satellite & API Integration (ISRO Bhuvan / NASA) |
-| **Member 3 (me)** | **Data Engineering & AI Engine (this repo's backend)** |
-| Member 4 | 3D Visualization & Frontend |
+| Member 1 |Varsha - Satellite & API Integration (ISRO Bhuvan / NASA|
+| Member 2 |Shikhar - 3D Visualization, VFX Simulation & Documentation |
+| **Member 3 (me)** |Dhruv - **Data Engineering & AI Engine (this repo's backend)** ,Sensor Integration (Ground Data)|
+
