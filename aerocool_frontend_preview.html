@@ -1,0 +1,407 @@
+
+<h2 class="sr-only">AeroCool AI full frontend dashboard preview with real Delhi data — 5 tabs: Heat Map, AI Models, Vulnerability Index, Scenario Simulator, Optimization Plan</h2>
+
+<style>
+:root {
+  --dark: #0B0E14;
+  --panel: #0E1420;
+  --panel2: #131822;
+  --border-d: #1F2533;
+  --green: #10B981;
+  --amber: #F59E0B;
+  --red: #EF4444;
+  --blue: #3B82F6;
+  --txt: #E5E9F0;
+  --muted: #6B7889;
+  --subtle: #9AA5B5;
+}
+.dash { background:#0B0E14; color:#E5E9F0; font-family:'Inter',sans-serif; border-radius:12px; overflow:hidden; border:1px solid #1F2533; }
+.topbar { background:#0E1420; border-bottom:1px solid #1F2533; padding:10px 18px; display:flex; justify-content:space-between; align-items:center; }
+.brand { font-size:18px; font-weight:700; font-family:monospace; color:#E5E9F0; }
+.brand span { color:#10B981; }
+.brand-sub { font-size:11px; color:#6B7889; margin-left:10px; }
+.status-pill { display:flex; align-items:center; gap:6px; background:#131822; border:1px solid #1F2533; border-radius:20px; padding:3px 12px; font-size:11px; color:#9AA5B5; }
+@keyframes pulse-d { 0%,100%{opacity:1} 50%{opacity:.3} }
+.dot-g { width:7px;height:7px;border-radius:50%;background:#10B981;animation:pulse-d 2s infinite;flex-shrink:0; }
+.nav { background:#0E1420; border-bottom:1px solid #1F2533; padding:6px 16px; display:flex; gap:4px; overflow-x:auto; }
+.ntab { background:transparent; border:1px solid #1F2533; border-radius:8px; color:#6B7889; padding:6px 14px; cursor:pointer; font-size:12px; font-family:inherit; white-space:nowrap; transition:all .15s; }
+.ntab.act { background:#131822; border-color:#3B82F6; color:#E5E9F0; }
+.body { padding:16px; min-height:400px; }
+.hd { font-size:16px; font-weight:500; margin:0 0 3px; }
+.sub { font-size:12px; color:#6B7889; margin:0 0 14px; }
+.metrics { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+.mcard { background:#0E1420; border:1px solid #1F2533; border-left:2px solid #10B981; border-radius:8px; padding:10px 12px; }
+.mval { font-size:18px; font-weight:600; color:#E5E9F0; font-family:monospace; }
+.mlbl { font-size:10px; color:#6B7889; margin-top:2px; text-transform:uppercase; letter-spacing:.04em; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.panel { background:#0E1420; border:1px solid #1F2533; border-radius:10px; overflow:hidden; }
+.ph { padding:9px 14px; border-bottom:1px solid #1F2533; font-size:10px; font-weight:500; color:#9AA5B5; font-family:monospace; text-transform:uppercase; letter-spacing:.05em; }
+.zrow { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid #0B0E14; font-size:12px; cursor:pointer; }
+.zrow:hover { background:#131822; }
+.zrank { font-family:monospace; font-size:11px; width:18px; flex-shrink:0; }
+.zname { flex:1; color:#E5E9F0; }
+.ztemp { font-family:monospace; font-size:12px; font-weight:600; }
+.zbadge { font-size:10px; font-weight:600; padding:2px 7px; border-radius:20px; }
+.detail-empty { display:flex; align-items:center; justify-content:center; height:200px; color:#3F4A5C; font-size:12px; flex-direction:column; gap:8px; }
+.drow { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #131822; font-size:12px; }
+.dkey { color:#6B7889; }
+.dval { font-family:monospace; font-weight:500; }
+.bar-t { height:5px; background:#1F2533; border-radius:3px; overflow:hidden; margin-bottom:8px; }
+.bar-f { height:100%; border-radius:3px; transition:width .5s; }
+/* model cards */
+.model-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px; }
+.mcard2 { background:#0E1420; border:1px solid #1F2533; border-radius:10px; padding:14px; position:relative; }
+.mcard2.best { border-top:2px solid #10B981; }
+.mname { font-size:14px; font-weight:500; margin-bottom:2px; }
+.mtype { font-size:11px; color:#6B7889; margin-bottom:12px; }
+.best-badge { background:#10B98122; color:#10B981; font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; display:inline-block; margin-top:10px; }
+/* scenario */
+.slider-wrap { margin-bottom:14px; }
+.sl-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px; }
+.sl-val { font-family:monospace; color:#10B981; font-weight:600; }
+input[type=range] { width:100%; accent-color:#10B981; }
+.sim-btn { width:100%; padding:10px; background:#10B981; color:#0B0E14; border:none; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; font-family:inherit; margin-top:8px; }
+.big-cool { text-align:center; padding:16px 0; border-bottom:1px solid #131822; margin-bottom:12px; }
+.big-n { font-size:42px; font-weight:700; color:#10B981; font-family:monospace; line-height:1; }
+.big-l { font-size:11px; color:#6B7889; margin-top:3px; }
+.srow { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #131822; font-size:12px; }
+/* hvi */
+.hvi-bar-wrap { padding:12px 14px; }
+.hvi-bar-row { margin-bottom:8px; }
+.hvi-bar-label { display:flex; justify-content:space-between; font-size:11px; margin-bottom:3px; }
+/* opt */
+.sc-bars { padding:12px 14px; }
+.sc-row { margin-bottom:10px; }
+.sc-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; color:#E5E9F0; }
+.sc-val { font-family:monospace; }
+/* tab content */
+.tpanel { display:none; }
+.tpanel.act { display:block; }
+.footer { padding:10px 18px; background:#0E1420; border-top:1px solid #1F2533; font-size:10px; color:#3F4A5C; font-family:monospace; text-align:center; }
+</style>
+
+<div class="dash">
+  <!-- Top bar -->
+  <div class="topbar">
+    <div style="display:flex;align-items:baseline;gap:0">
+      <span class="brand">Bharat<span>X</span></span>
+      <span class="brand-sub">AeroCool AI · Urban Heat Mitigation Engine</span>
+    </div>
+    <div class="status-pill">
+      <span class="dot-g"></span>
+      API online · github.com/dhru189/AeroCool-AI
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="ntab act" onclick="switchTab('heatmap',this)">🗺️ Heat Map</button>
+    <button class="ntab" onclick="switchTab('models',this)">🧠 AI Models</button>
+    <button class="ntab" onclick="switchTab('hvi',this)">⚠️ Vulnerability</button>
+    <button class="ntab" onclick="switchTab('scenario',this)">🌿 Simulator</button>
+    <button class="ntab" onclick="switchTab('optimizer',this)">📋 Optimizer</button>
+  </div>
+
+  <div class="body">
+
+    <!-- ── TAB 1: HEAT MAP ── -->
+    <div id="tab-heatmap" class="tpanel act">
+      <p class="hd">Urban Heat Stress Map — Delhi NCR</p>
+      <p class="sub">20 sensor zones · Predicted land surface temperature · Priority scoring</p>
+      <div class="metrics">
+        <div class="mcard"><div class="mval">20</div><div class="mlbl">Zones monitored</div></div>
+        <div class="mcard"><div class="mval" style="color:#F59E0B">20</div><div class="mlbl">High-risk zones</div></div>
+        <div class="mcard"><div class="mval">39.9°C</div><div class="mlbl">Avg city temp</div></div>
+        <div class="mcard"><div class="mval" style="font-size:13px">Loni Border</div><div class="mlbl">Top priority zone</div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="ph">Zone rankings by priority score</div>
+          <div id="zone-list" style="max-height:320px;overflow-y:auto"></div>
+        </div>
+        <div class="panel">
+          <div class="ph">Zone detail</div>
+          <div id="zone-detail">
+            <div class="detail-empty">
+              <span style="font-size:28px">👆</span>
+              Click a zone to see details
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB 2: AI MODELS ── -->
+    <div id="tab-models" class="tpanel">
+      <p class="hd">AI Model Performance</p>
+      <p class="sub">Three models trained on real Delhi sensor data</p>
+      <div class="model-grid" id="model-cards"></div>
+      <div class="panel">
+        <div class="ph">SHAP driver attribution — why each zone is hot</div>
+        <div id="shap-table" style="overflow-x:auto;max-height:280px;overflow-y:auto"></div>
+      </div>
+    </div>
+
+    <!-- ── TAB 3: HVI ── -->
+    <div id="tab-hvi" class="tpanel">
+      <p class="hd">Heat Vulnerability Index</p>
+      <p class="sub">Temperature + population density + elderly % + schools + hospitals</p>
+      <div class="metrics" id="hvi-metrics"></div>
+      <div class="panel">
+        <div class="ph">HVI scores — all 20 zones</div>
+        <div class="hvi-bar-wrap" id="hvi-bars"></div>
+      </div>
+    </div>
+
+    <!-- ── TAB 4: SCENARIO ── -->
+    <div id="tab-scenario" class="tpanel">
+      <p class="hd">Cooling Scenario Simulator</p>
+      <p class="sub">Adjust interventions — results update live</p>
+      <div class="grid2">
+        <div class="panel">
+          <div class="ph">Intervention controls</div>
+          <div style="padding:14px">
+            <div class="slider-wrap">
+              <div class="sl-label"><span>🏠 Cool Roof Coverage</span><span class="sl-val" id="cr-val">30%</span></div>
+              <input type="range" min="0" max="100" step="5" value="30" id="sl-cr" oninput="updateSim()">
+            </div>
+            <div class="slider-wrap">
+              <div class="sl-label"><span>🌳 Trees Planted</span><span class="sl-val" id="tr-val">3,000</span></div>
+              <input type="range" min="0" max="10000" step="100" value="3000" id="sl-tr" oninput="updateSim()">
+            </div>
+            <div class="slider-wrap">
+              <div class="sl-label"><span>💧 Misting Stations</span><span class="sl-val" id="ms-val">15</span></div>
+              <input type="range" min="0" max="50" step="1" value="15" id="sl-ms" oninput="updateSim()">
+            </div>
+            <div class="slider-wrap">
+              <div class="sl-label"><span>🌿 Green Roof</span><span class="sl-val" id="gr-val">10%</span></div>
+              <input type="range" min="0" max="50" step="5" value="10" id="sl-gr" oninput="updateSim()">
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph">Simulation output</div>
+          <div style="padding:14px">
+            <div class="big-cool">
+              <div class="big-n" id="sim-cooling">−8.9°C</div>
+              <div class="big-l">city-wide average cooling</div>
+            </div>
+            <div class="srow"><span class="dkey">Cost</span><span class="dval" id="sim-cost" style="color:#3B82F6">₹34 Cr</span></div>
+            <div class="srow"><span class="dkey">Water saved / day</span><span class="dval" id="sim-water" style="color:#10B981">89,000 L</span></div>
+            <div class="srow"><span class="dkey">CO₂ avoided / day</span><span class="dval" id="sim-co2" style="color:#10B981">30.3 kg</span></div>
+            <div class="srow"><span class="dkey">People protected</span><span class="dval" id="sim-pop" style="color:#F59E0B">~106,800</span></div>
+            <div style="margin-top:12px">
+              <div style="font-size:10px;color:#6B7889;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Breakdown</div>
+              <div style="font-size:11px;color:#9AA5B5;margin-bottom:4px;display:flex;justify-content:space-between"><span>Cool roofs</span><span id="b-cr" style="font-family:monospace">−3.0°C</span></div>
+              <div class="bar-t"><div class="bar-f" id="bb-cr" style="background:#3B82F6;width:34%"></div></div>
+              <div style="font-size:11px;color:#9AA5B5;margin-bottom:4px;display:flex;justify-content:space-between"><span>Trees</span><span id="b-tr" style="font-family:monospace">−0.6°C</span></div>
+              <div class="bar-t"><div class="bar-f" id="bb-tr" style="background:#10B981;width:7%"></div></div>
+              <div style="font-size:11px;color:#9AA5B5;margin-bottom:4px;display:flex;justify-content:space-between"><span>Misting</span><span id="b-ms" style="font-family:monospace">−6.0°C</span></div>
+              <div class="bar-t"><div class="bar-f" id="bb-ms" style="background:#F59E0B;width:67%"></div></div>
+              <div style="font-size:11px;color:#9AA5B5;margin-bottom:4px;display:flex;justify-content:space-between"><span>Green roofs</span><span id="b-gr" style="font-family:monospace">−0.3°C</span></div>
+              <div class="bar-t"><div class="bar-f" id="bb-gr" style="background:#8B5CF6;width:3%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB 5: OPTIMIZER ── -->
+    <div id="tab-optimizer" class="tpanel">
+      <p class="hd">Budget Optimization Plan</p>
+      <p class="sub">Knapsack algorithm · Maximize cooling within ₹50 Cr budget</p>
+      <div class="metrics">
+        <div class="mcard"><div class="mval" style="color:#10B981">−2.2°C</div><div class="mlbl">Total cooling</div></div>
+        <div class="mcard"><div class="mval" style="color:#3B82F6">₹49.5 Cr</div><div class="mlbl">Budget used</div></div>
+        <div class="mcard"><div class="mval">20</div><div class="mlbl">Zones covered</div></div>
+        <div class="mcard"><div class="mval" style="color:#F59E0B">~1.16L</div><div class="mlbl">People protected</div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="ph">Scenario comparison</div>
+          <div class="sc-bars" id="sc-bars"></div>
+        </div>
+        <div class="panel">
+          <div class="ph">Before vs after — top zones</div>
+          <div id="ba-table" style="overflow-y:auto;max-height:280px"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    AeroCool AI · Team BharatX · Bharatiya Antariksh Hackathon 2026 · ISRO · github.com/dhru189/AeroCool-AI
+  </div>
+</div>
+
+<script>
+// ── REAL DATA from your CSV files ──
+const ZONES = [{"name":"Loni Border","pred_temp":39.9,"ndvi":0.383,"priority_score":0.624,"uhi_intensity":-0.032,"heat_stress":36.06,"risk_level":"🟠 HIGH","rank":1},{"name":"Connaught Place","pred_temp":39.9,"ndvi":0.384,"priority_score":0.623,"uhi_intensity":-0.030,"heat_stress":36.06,"risk_level":"🟠 HIGH","rank":2},{"name":"Dwarka Sec-23","pred_temp":39.9,"ndvi":0.384,"priority_score":0.623,"uhi_intensity":-0.030,"heat_stress":36.06,"risk_level":"🟠 HIGH","rank":3},{"name":"Rohini","pred_temp":39.97,"ndvi":0.386,"priority_score":0.622,"uhi_intensity":0.04,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":4},{"name":"Anand Vihar","pred_temp":39.96,"ndvi":0.386,"priority_score":0.621,"uhi_intensity":0.03,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":5},{"name":"Uttam Nagar","pred_temp":39.98,"ndvi":0.388,"priority_score":0.619,"uhi_intensity":0.05,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":6},{"name":"Ghazipur","pred_temp":39.95,"ndvi":0.388,"priority_score":0.618,"uhi_intensity":0.02,"heat_stress":36.09,"risk_level":"🟠 HIGH","rank":7},{"name":"Dilshad Garden","pred_temp":39.95,"ndvi":0.389,"priority_score":0.617,"uhi_intensity":0.02,"heat_stress":36.09,"risk_level":"🟠 HIGH","rank":8},{"name":"Badarpur","pred_temp":39.95,"ndvi":0.389,"priority_score":0.616,"uhi_intensity":0.02,"heat_stress":36.09,"risk_level":"🟠 HIGH","rank":9},{"name":"Palam","pred_temp":40.01,"ndvi":0.391,"priority_score":0.615,"uhi_intensity":0.08,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":10},{"name":"Mundka","pred_temp":39.97,"ndvi":0.391,"priority_score":0.614,"uhi_intensity":0.04,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":11},{"name":"Faridabad Border","pred_temp":39.97,"ndvi":0.392,"priority_score":0.613,"uhi_intensity":0.04,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":12},{"name":"Vikaspuri","pred_temp":39.97,"ndvi":0.392,"priority_score":0.613,"uhi_intensity":0.04,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":13},{"name":"Mayur Vihar","pred_temp":39.97,"ndvi":0.393,"priority_score":0.612,"uhi_intensity":0.04,"heat_stress":36.1,"risk_level":"🟠 HIGH","rank":14},{"name":"Sarita Vihar","pred_temp":39.94,"ndvi":0.393,"priority_score":0.610,"uhi_intensity":0.01,"heat_stress":36.08,"risk_level":"🟠 HIGH","rank":15},{"name":"Bawana","pred_temp":39.94,"ndvi":0.394,"priority_score":0.609,"uhi_intensity":0.01,"heat_stress":36.08,"risk_level":"🟠 HIGH","rank":16},{"name":"Vasant Kunj","pred_temp":39.93,"ndvi":0.394,"priority_score":0.608,"uhi_intensity":0.0,"heat_stress":36.07,"risk_level":"🟠 HIGH","rank":17},{"name":"Narela","pred_temp":39.93,"ndvi":0.395,"priority_score":0.607,"uhi_intensity":0.0,"heat_stress":36.07,"risk_level":"🟠 HIGH","rank":18},{"name":"Qutub Minar","pred_temp":39.93,"ndvi":0.395,"priority_score":0.607,"uhi_intensity":0.0,"heat_stress":36.07,"risk_level":"🟠 HIGH","rank":19},{"name":"Najafgarh","pred_temp":39.93,"ndvi":0.396,"priority_score":0.606,"uhi_intensity":0.0,"heat_stress":36.07,"risk_level":"🟠 HIGH","rank":20}];
+
+const MODELS = [{"Model":"Random Forest","MAE":0.013,"R2":1.0,"Type":"Baseline ML","Physics":"No"},{"Model":"XGBoost","MAE":0.053,"R2":0.9998,"Type":"Gradient Boost","Physics":"No"},{"Model":"PINN (Ours)","MAE":1.093,"R2":0.9388,"Type":"Custom Neural Net","Physics":"Yes ✓"}];
+
+const SHAP = [{"location":"Loni Border","avg_temp":39.9,"avg_ndvi":0.383,"top_driver":"solar_interaction","top_driver_pct":38.6},{"location":"Connaught Place","avg_temp":39.9,"avg_ndvi":0.384,"top_driver":"solar_interaction","top_driver_pct":38.5},{"location":"Palam","avg_temp":40.01,"avg_ndvi":0.391,"top_driver":"solar_interaction","top_driver_pct":38.2},{"location":"Anand Vihar","avg_temp":39.96,"avg_ndvi":0.386,"top_driver":"diurnal_factor","top_driver_pct":24.7},{"location":"Rohini","avg_temp":39.97,"avg_ndvi":0.386,"top_driver":"solar_interaction","top_driver_pct":37.9},{"location":"Uttam Nagar","avg_temp":39.98,"avg_ndvi":0.388,"top_driver":"solar_interaction","top_driver_pct":37.8},{"location":"Ghazipur","avg_temp":39.95,"avg_ndvi":0.388,"top_driver":"diurnal_factor","top_driver_pct":25.1},{"location":"Badarpur","avg_temp":39.95,"avg_ndvi":0.389,"top_driver":"solar_interaction","top_driver_pct":37.5}];
+
+const HVI = [{"location":"Palam","hvi_score":67.2,"hvi_class":"🟠 HIGH","pred_temp":40.01,"pop_density":22000,"elderly_pct":6.8},{"location":"Anand Vihar","hvi_score":61.4,"hvi_class":"🟠 HIGH","pred_temp":39.96,"pop_density":38000,"elderly_pct":7.1},{"location":"Rohini","hvi_score":59.3,"hvi_class":"🟠 HIGH","pred_temp":39.97,"pop_density":28000,"elderly_pct":7.2},{"location":"Ghazipur","hvi_score":55.3,"hvi_class":"🟠 HIGH","pred_temp":39.95,"pop_density":35000,"elderly_pct":6.9},{"location":"Uttam Nagar","hvi_score":53.8,"hvi_class":"🟠 HIGH","pred_temp":39.98,"pop_density":40000,"elderly_pct":6.7},{"location":"Dilshad Garden","hvi_score":51.2,"hvi_class":"🟡 MODERATE","pred_temp":39.95,"pop_density":36000,"elderly_pct":7.3},{"location":"Badarpur","hvi_score":49.7,"hvi_class":"🟡 MODERATE","pred_temp":39.95,"pop_density":33000,"elderly_pct":6.5},{"location":"Mayur Vihar","hvi_score":47.3,"hvi_class":"🟡 MODERATE","pred_temp":39.97,"pop_density":30000,"elderly_pct":8.0},{"location":"Vikaspuri","hvi_score":44.1,"hvi_class":"🟡 MODERATE","pred_temp":39.97,"pop_density":25000,"elderly_pct":7.8},{"location":"Loni Border","hvi_score":41.5,"hvi_class":"🟡 MODERATE","pred_temp":39.9,"pop_density":32000,"elderly_pct":5.8}];
+
+const SCENARIOS = [{"Scenario":"Business as Usual","Cooling":0,"After":39.93,"Cost":0},{"Scenario":"Greenery Focus","Cooling":3.1,"After":36.83,"Cost":31},{"Scenario":"Cool Roof Focus","Cooling":4.6,"After":35.33,"Cost":27},{"Scenario":"Hybrid Optimal","Cooling":8.9,"After":31.03,"Cost":34}];
+
+const BA = [{"location":"Palam","before_temp":40.01,"after_temp":36.71,"delta_temp":3.3},{"location":"Anand Vihar","before_temp":39.96,"after_temp":36.49,"delta_temp":3.47},{"location":"Rohini","before_temp":39.97,"after_temp":37.06,"delta_temp":2.91},{"location":"Ghazipur","before_temp":39.95,"after_temp":36.82,"delta_temp":3.13},{"location":"Uttam Nagar","before_temp":39.98,"after_temp":36.93,"delta_temp":3.05},{"location":"Loni Border","before_temp":39.9,"after_temp":36.62,"delta_temp":3.28}];
+
+// ── Tab switching ──
+function switchTab(id, btn) {
+  document.querySelectorAll('.tpanel').forEach(p => p.classList.remove('act'));
+  document.querySelectorAll('.ntab').forEach(b => b.classList.remove('act'));
+  document.getElementById('tab-' + id).classList.add('act');
+  btn.classList.add('act');
+}
+
+// ── Zone list ──
+const RISK_COLOR = {"🟠 HIGH":"#F59E0B","🔴 CRITICAL":"#EF4444","🟡 MODERATE":"#EAB308","🟢 LOW":"#10B981"};
+let selectedZone = null;
+const zlist = document.getElementById('zone-list');
+ZONES.forEach((z, i) => {
+  const c = RISK_COLOR[z.risk_level] || '#6B7889';
+  const row = document.createElement('div');
+  row.className = 'zrow';
+  row.style.borderLeft = `3px solid ${c}`;
+  row.innerHTML = `<span class="zrank" style="color:${c}">${z.rank}</span><span class="zname">${z.name}</span><span class="ztemp" style="color:#E5E9F0">${z.pred_temp.toFixed(1)}°C</span><span class="zbadge" style="background:${c}22;color:${c}">${z.priority_score.toFixed(3)}</span>`;
+  row.onclick = () => {
+    selectedZone = z;
+    renderDetail(z);
+    document.querySelectorAll('.zrow').forEach(r => r.style.background = 'transparent');
+    row.style.background = '#131822';
+  };
+  zlist.appendChild(row);
+});
+
+function renderDetail(z) {
+  const c = RISK_COLOR[z.risk_level] || '#6B7889';
+  document.getElementById('zone-detail').innerHTML = `
+    <div style="padding:12px 14px">
+      <div style="font-size:14px;font-weight:500;color:#E5E9F0;margin-bottom:10px">${z.name}</div>
+      <div class="drow"><span class="dkey">Predicted temp</span><span class="dval" style="color:#EF4444">${z.pred_temp.toFixed(1)}°C</span></div>
+      <div class="drow"><span class="dkey">NDVI</span><span class="dval" style="color:#10B981">${z.ndvi.toFixed(3)}</span></div>
+      <div class="drow"><span class="dkey">Priority score</span><span class="dval" style="color:${c}">${z.priority_score.toFixed(3)}</span></div>
+      <div class="drow"><span class="dkey">UHI intensity</span><span class="dval">${z.uhi_intensity >= 0 ? '+' : ''}${z.uhi_intensity.toFixed(2)}°C</span></div>
+      <div class="drow"><span class="dkey">Heat stress index</span><span class="dval">${z.heat_stress.toFixed(1)}°C</span></div>
+      <div class="drow"><span class="dkey">Rank</span><span class="dval">#${z.rank}</span></div>
+      <div style="margin-top:10px">
+        <div style="font-size:10px;color:#6B7889;text-transform:uppercase;margin-bottom:5px">Heat intensity</div>
+        <div class="bar-t"><div class="bar-f" style="background:#EF4444;width:${Math.min(100,(z.pred_temp-30)/15*100).toFixed(0)}%"></div></div>
+        <div style="font-size:10px;color:#6B7889;text-transform:uppercase;margin-bottom:5px;margin-top:8px">Vegetation cover</div>
+        <div class="bar-t"><div class="bar-f" style="background:#10B981;width:${(z.ndvi*100).toFixed(0)}%"></div></div>
+      </div>
+    </div>`;
+}
+
+// ── Model cards ──
+const mc = document.getElementById('model-cards');
+MODELS.forEach(m => {
+  const best = m.Model === 'XGBoost';
+  mc.innerHTML += `<div class="mcard2 ${best?'best':''}">
+    <div class="mname">${m.Model}</div>
+    <div class="mtype">${m.Type}</div>
+    <div class="drow"><span class="dkey">MAE</span><span class="dval" style="color:#10B981">${m.MAE}°C</span></div>
+    <div class="drow"><span class="dkey">R²</span><span class="dval">${m.R2}</span></div>
+    <div class="drow"><span class="dkey">Physics</span><span class="dval" style="color:${m.Physics.includes('Yes')?'#10B981':'#6B7889'}">${m.Physics}</span></div>
+    ${best?'<div class="best-badge">Best MAE ✓</div>':''}
+  </div>`;
+});
+
+const st = document.getElementById('shap-table');
+st.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+  <thead><tr style="border-bottom:1px solid #1F2533">
+    <th style="padding:7px 12px;text-align:left;color:#6B7889;font-size:10px;text-transform:uppercase;letter-spacing:.05em">Zone</th>
+    <th style="padding:7px 12px;text-align:left;color:#6B7889;font-size:10px;text-transform:uppercase">Avg Temp</th>
+    <th style="padding:7px 12px;text-align:left;color:#6B7889;font-size:10px;text-transform:uppercase">Top driver</th>
+    <th style="padding:7px 12px;text-align:right;color:#6B7889;font-size:10px;text-transform:uppercase">Driver %</th>
+  </tr></thead><tbody>
+  ${SHAP.map((r,i) => `<tr style="background:${i%2===0?'#0E1420':'transparent'}">
+    <td style="padding:7px 12px;color:#E5E9F0">${r.location}</td>
+    <td style="padding:7px 12px;color:#EF4444;font-family:monospace">${r.avg_temp.toFixed(1)}°C</td>
+    <td style="padding:7px 12px;color:#F59E0B">${r.top_driver}</td>
+    <td style="padding:7px 12px;text-align:right;font-family:monospace">${r.top_driver_pct.toFixed(1)}%</td>
+  </tr>`).join('')}
+  </tbody></table>`;
+
+// ── HVI ──
+const hm = document.getElementById('hvi-metrics');
+const topHVI = HVI[0];
+const critCount = HVI.filter(z => z.hvi_class.includes('CRITICAL')).length;
+const highCount = HVI.filter(z => z.hvi_class.includes('HIGH')).length;
+hm.innerHTML = `
+  <div class="mcard"><div class="mval" style="color:#EF4444">${critCount}</div><div class="mlbl">Critical zones</div></div>
+  <div class="mcard"><div class="mval" style="color:#F59E0B">${highCount}</div><div class="mlbl">High zones</div></div>
+  <div class="mcard"><div class="mval" style="font-size:13px">${topHVI.location}</div><div class="mlbl">Most vulnerable</div></div>
+  <div class="mcard"><div class="mval" style="color:#10B981">${topHVI.hvi_score}</div><div class="mlbl">Top HVI score</div></div>`;
+
+const hb = document.getElementById('hvi-bars');
+const maxHVI = Math.max(...HVI.map(z => z.hvi_score));
+hb.innerHTML = HVI.map(z => {
+  const c = z.hvi_class.includes('CRITICAL')?'#EF4444':z.hvi_class.includes('HIGH')?'#F59E0B':'#10B981';
+  return `<div class="hvi-bar-row">
+    <div class="hvi-bar-label">
+      <span style="color:#E5E9F0;font-size:12px">${z.location}</span>
+      <span style="font-family:monospace;font-size:12px;color:${c}">${z.hvi_score.toFixed(1)}</span>
+    </div>
+    <div class="bar-t"><div class="bar-f" style="background:${c};width:${(z.hvi_score/maxHVI*100).toFixed(0)}%"></div></div>
+  </div>`;
+}).join('');
+
+// ── Scenario simulator ──
+function updateSim() {
+  const cr = +document.getElementById('sl-cr').value;
+  const tr = +document.getElementById('sl-tr').value;
+  const ms = +document.getElementById('sl-ms').value;
+  const gr = +document.getElementById('sl-gr').value;
+  document.getElementById('cr-val').textContent = cr + '%';
+  document.getElementById('tr-val').textContent = tr.toLocaleString();
+  document.getElementById('ms-val').textContent = ms;
+  document.getElementById('gr-val').textContent = gr + '%';
+  const crE = (cr/10)*0.10, trE = (tr/100)*0.02, msE = ms*0.40, grE = (gr/10)*0.15;
+  const total = crE + trE + msE + grE;
+  const cost = Math.round((cr/10)*5 + (tr/100)*0.5 + ms*0.2 + (gr/10)*8);
+  const water = Math.round(total*500*20);
+  document.getElementById('sim-cooling').textContent = '−' + total.toFixed(1) + '°C';
+  document.getElementById('sim-cost').textContent = '₹' + cost + ' Cr';
+  document.getElementById('sim-water').textContent = water.toLocaleString() + ' L';
+  document.getElementById('sim-co2').textContent = (water*0.34/1000).toFixed(1) + ' kg';
+  document.getElementById('sim-pop').textContent = '~' + Math.round(total*12000).toLocaleString();
+  const t = total || 1;
+  ['cr','tr','ms','gr'].forEach((k,i) => {
+    const v = [crE,trE,msE,grE][i];
+    const pct = Math.round(v/t*100);
+    document.getElementById('b-'+k).textContent = '−' + v.toFixed(2) + '°C';
+    document.getElementById('bb-'+k).style.width = pct + '%';
+  });
+}
+updateSim();
+
+// ── Optimizer: scenario bars ──
+const sb = document.getElementById('sc-bars');
+const maxC = Math.max(...SCENARIOS.map(s => s.Cooling));
+const cols = ['#6B7889','#3B82F6','#F59E0B','#10B981'];
+sb.innerHTML = SCENARIOS.map((s,i) => `<div class="sc-row">
+  <div class="sc-label"><span>${s.Scenario}</span><span class="sc-val" style="color:${cols[i]}">−${s.Cooling}°C · ₹${s.Cost}Cr</span></div>
+  <div class="bar-t"><div class="bar-f" style="background:${cols[i]};width:${maxC?Math.round(s.Cooling/maxC*100):0}%"></div></div>
+</div>`).join('');
+
+// ── Before/After table ──
+const bat = document.getElementById('ba-table');
+bat.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+  <thead><tr style="border-bottom:1px solid #1F2533">
+    <th style="padding:7px 12px;text-align:left;color:#6B7889;font-size:10px;text-transform:uppercase">Zone</th>
+    <th style="padding:7px 12px;text-align:right;color:#6B7889;font-size:10px;text-transform:uppercase">Before</th>
+    <th style="padding:7px 12px;text-align:right;color:#6B7889;font-size:10px;text-transform:uppercase">After</th>
+    <th style="padding:7px 12px;text-align:right;color:#6B7889;font-size:10px;text-transform:uppercase">ΔT</th>
+  </tr></thead><tbody>
+  ${BA.map((r,i) => `<tr style="background:${i%2===0?'#0E1420':'transparent'}">
+    <td style="padding:7px 12px;color:#E5E9F0">${r.location}</td>
+    <td style="padding:7px 12px;text-align:right;font-family:monospace;color:#EF4444">${r.before_temp.toFixed(1)}°C</td>
+    <td style="padding:7px 12px;text-align:right;font-family:monospace;color:#10B981">${r.after_temp.toFixed(1)}°C</td>
+    <td style="padding:7px 12px;text-align:right;font-family:monospace;color:#10B981;font-weight:700">−${r.delta_temp.toFixed(2)}°C</td>
+  </tr>`).join('')}
+  </tbody></table>`;
+</script>
